@@ -1,9 +1,3 @@
-var bear;
-var bees;
-var game_start=false;
-var lastStingTime;
-var updateTimer;
-
 function Bear() {
     this.dBear = 100;
     this.htmlElement = document.getElementById("bear");
@@ -11,7 +5,9 @@ function Bear() {
     this.x = this.htmlElement.offsetLeft;
     this.y = this.htmlElement.offsetTop;
 
+
     this.move = function(xDir, yDir) {
+        this.fitBounds(); //we add this instruction to keep bear within board
         this.x += this.dBear * xDir;
         this.y += this.dBear * yDir;
         this.display();
@@ -23,23 +19,36 @@ function Bear() {
         this.htmlElement.style.display = "block";
     };
 
-}
+    this.fitBounds = function() {
+        let parent = this.htmlElement.parentElement;
+        let iw = this.htmlElement.offsetWidth;
+        let ih = this.htmlElement.offsetHeight;
+        let l = parent.offsetLeft;
+        let t = parent.offsetTop;
+        let w = parent.offsetWidth;
+        let h = parent.offsetHeight;
+        if (this.x < 0) this.x = 0;
+        if (this.x > w - iw) this.x = w - iw;
+        if (this.y < 0) this.y = 0;
+        if (this.y > h - ih) this.y = h - ih;
+    };
 
+}
+   
+//changes
 function setspeed(){
     let speed_bear = document.getElementById("dBear").value;
-    console.log(bear.dBear);
-}
-    
-   
+    let dx = getRandomInt(2 * speed_bear) - speed_bear;
+    let dy = getRandomInt(2 * speed_bear) - speed_bear;
+    //console.log(bear.dBear);
+    bear.move(dx, dy);
+}  
 
 // Handle keyboad events 
 // to move the bear
-function moveBear(e) {
-    if (!game_start){
-        game_start=true;
-        lastStingTime = new Date();
 
-    }
+function moveBear(e) {
+
     //codes of the four keys
     const KEYUP = 38;
     const KEYDOWN = 40;
@@ -65,34 +74,19 @@ function start() {
     
     // Add an event listener to the keypress event.
     document.addEventListener("keydown", moveBear, false);
+
     //create new array for bees
     bees = new Array();
+
     //create bees
     makeBees();
-    var lastStingTime;
+
+    updateBees()  //------<changes>------
+
+    lastStingTime = document.addEventListener("keydown", moveBear, true);  //------<changes>------
 
 }
 
-this.fitBounds = function() {
-    let parent = this.htmlElement.parentElement;
-    let iw = this.htmlElement.offsetWidth;
-    let ih = this.htmlElement.offsetHeight;
-    let l = parent.offsetLeft;
-    let t = parent.offsetTop;
-    let w = parent.offsetWidth;
-    let h = parent.offsetHeight;
-    if (this.x < 0) this.x = 0;
-    if (this.x > w - iw) this.x = w - iw;
-    if (this.y < 0) this.y = 0;
-    if (this.y > h - ih) this.y = h - ih;
-};
-
-this.move = function(xDir, yDir) {
-    this.fitBounds(); //we add this instruction to keep bear within board
-    this.x += this.dBear * xDir;
-    this.y += this.dBear * yDir;
-    this.display();
-};
    
 class Bee {
     constructor(beeNumber) {
@@ -187,6 +181,13 @@ function makeBees() {
         i++;
     }
 }
+
+function addBees(){
+    var num = 1;
+    var bee = new Bee(num); //create object and its IMG element
+    bee.display(); //display the bee
+    bees.push(bee); //add the bee object to the bees array
+}
    
 function moveBees() {
     //get speed input field value
@@ -196,7 +197,7 @@ function moveBees() {
         let dx = getRandomInt(2 * speed) - speed;
         let dy = getRandomInt(2 * speed) - speed;
         bees[i].move(dx, dy);
-        isHit(bees[i], bear); //we add this to count stings
+        isHit(bees[i], bear); //we add this to count stings  //------<changes>------
     }
 }
 
@@ -204,29 +205,42 @@ function updateBees() { // update loop for game
     //move the bees randomly
     moveBees();
     //use a fixed update period
-    let period = document.getElementById("periodTimer").value;//modify this to control refresh period
+    //------<changes>------
+    let period = document.getElementById("periodTimer").value;//modify this to control refresh period 
     //update the timer for the next move
     updateTimer = setTimeout('updateBees()', period);
+
 }
+
 
 function isHit(defender, offender) {
     if (overlap(defender, offender)) { //check if the two image overlap
-        let score = hits.innerHTML;
-        score = Number(score) + 1; //increment the score
-        hits.innerHTML = score; //display the new score
-         //calculate longest duration
-        let newStingTime = new Date();
-        let thisDuration = newStingTime - lastStingTime;
-        lastStingTime = newStingTime;
-        let longestDuration = Number(duration.innerHTML);
-        if (longestDuration === 0) {
-            longestDuration = thisDuration;
-        } else {
-         if (longestDuration < thisDuration) longestDuration = thisDuration;
+        let score = document.getElementById("hits").innerHTML;
+            //------<changes>------
+        if(score==1000){
+            clearTimeout();
+            window.alert("Game Over!");
         }
-        document.getElementById("duration").innerHTML = longestDuration;
+        else{
+            score = Number(score) + 1; //increment the score
+            hits.innerHTML = score; //display the new score
+
+            //calculate longest duration
+            let newStingTime = new Date(); //------<changes>------
+            let thisDuration = newStingTime - lastStingTime;
+            lastStingTime = newStingTime;
+
+            let longestDuration = Number(duration.innerHTML);
+            if (longestDuration === 0) {
+                longestDuration = thisDuration;
+            } else {
+            if (longestDuration < thisDuration) longestDuration = thisDuration;
+            }
+            document.getElementById("duration").innerHTML = longestDuration;
+        }
     }
 }
+
 
 function overlap(element1, element2) {
     //consider the two rectangles wrapping the two elements
