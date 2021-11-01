@@ -1,5 +1,13 @@
+var bear;
+var bees;
+var nbBees;
+var game_start=false;
+var lastStingTime;
+var updateTimer=false;
+
 function Bear() {
-    this.dBear = 100;
+    this.dBear=100;
+    //this.dBear = document.getElementById("dBear").value;
     this.htmlElement = document.getElementById("bear");
     this.id = this.htmlElement.id;
     this.x = this.htmlElement.offsetLeft;
@@ -37,11 +45,11 @@ function Bear() {
    
 //changes
 function setspeed(){
-    let speed_bear = document.getElementById("dBear").value;
-    let dx = getRandomInt(2 * speed_bear) - speed_bear;
-    let dy = getRandomInt(2 * speed_bear) - speed_bear;
-    //console.log(bear.dBear);
-    bear.move(dx, dy);
+    bear.dBear = document.getElementById("dBear").value;
+    //let dx = getRandomInt(2 * speed_bear) - speed_bear;
+    //let dy = getRandomInt(2 * speed_bear) - speed_bear;
+    console.log(bear.dBear);
+    //bear.move(dx, dy);
 }  
 
 // Handle keyboad events 
@@ -77,13 +85,15 @@ function start() {
 
     //create new array for bees
     bees = new Array();
+    //bees[0]=1;  ///------<changes>------
 
     //create bees
     makeBees();
 
     updateBees()  //------<changes>------
 
-    lastStingTime = document.addEventListener("keydown", moveBear, true);  //------<changes>------
+    //lastStingtime= document.addEventListener("keydown", moveBear, true);  //------<changes>------
+    lastStingTime= new Date();
 
 }
 
@@ -164,21 +174,33 @@ function getRandomInt(max) {
 }
 
 function makeBees() {
+    reset()
     //get number of bees specified by the user
     let nbBees = document.getElementById("nbBees").value;
-    nbBees = Number(nbBees); //try converting the content of the input to a number 
-    if (isNaN(nbBees)) { //check that the input field contains a valid number
+    let nBees = Number(nbBees); //try converting the content of the input to a number 
+    if (isNaN(nBees)) { //check that the input field contains a valid number
         window.alert("Invalid number of bees");
-    return;
+        //return;
     }
-    //create bees 
-    let i = 1;
-    while (i <= nbBees) {
-        var num = i;
-        var bee = new Bee(num); //create object and its IMG element
-        bee.display(); //display the bee
-        bees.push(bee); //add the bee object to the bees array
-        i++;
+    else{
+        //create bees 
+        let i = 1;
+        while (i <= nBees) {
+            var num = i;
+            var bee = new Bee(num); //create object and its IMG element
+            bee.display(); //display the bee
+            bees.push(bee); //add the bee object to the bees array
+            i++;
+        }
+    }
+    
+    
+}
+
+function reset(){
+    while(bees.length>0){
+        bees[bees.length -1].htmlElement.remove();
+        bees.pop();
     }
 }
 
@@ -212,32 +234,40 @@ function updateBees() { // update loop for game
 
 }
 
+function clearTimeout(){
+    while (true){
+        updateTimer =setTimeout('updateBees()', 0);
+    }
+    
+}
 
 function isHit(defender, offender) {
     if (overlap(defender, offender)) { //check if the two image overlap
         let score = document.getElementById("hits").innerHTML;
             //------<changes>------
+
+        score = Number(score) + 1; //increment the score
+        hits.innerHTML = score; //display the new score
+
         if(score==1000){
-            clearTimeout();
             window.alert("Game Over!");
-        }
-        else{
-            score = Number(score) + 1; //increment the score
-            hits.innerHTML = score; //display the new score
+            clearTimeout();
 
-            //calculate longest duration
-            let newStingTime = new Date(); //------<changes>------
-            let thisDuration = newStingTime - lastStingTime;
-            lastStingTime = newStingTime;
-
-            let longestDuration = Number(duration.innerHTML);
-            if (longestDuration === 0) {
-                longestDuration = thisDuration;
-            } else {
-            if (longestDuration < thisDuration) longestDuration = thisDuration;
-            }
-            document.getElementById("duration").innerHTML = longestDuration;
         }
+
+        //calculate longest duration
+        let newStingTime = new Date(); //------<changes>------
+        let thisDuration = newStingTime - lastStingTime;
+        lastStingTime = newStingTime;
+
+        let longestDuration = Number(duration.innerHTML);
+        if (longestDuration === 0) {
+            longestDuration = thisDuration;
+        } else {
+        if (longestDuration < thisDuration) longestDuration = thisDuration;
+        }
+        document.getElementById("duration").innerHTML = longestDuration;
+    
     }
 }
 
