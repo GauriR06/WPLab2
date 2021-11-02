@@ -39,17 +39,15 @@ function Bear() {
         if (this.x > w - iw) this.x = w - iw;
         if (this.y < 0) this.y = 0;
         if (this.y > h - ih) this.y = h - ih;
-    };
+        };
 
 }
    
 //changes
 function setspeed(){
     bear.dBear = document.getElementById("dBear").value;
-    //let dx = getRandomInt(2 * speed_bear) - speed_bear;
-    //let dy = getRandomInt(2 * speed_bear) - speed_bear;
-    console.log(bear.dBear);
-    //bear.move(dx, dy);
+    //console.log(bear.dBear);
+    
 }  
 
 // Handle keyboad events 
@@ -83,21 +81,25 @@ function start() {
     // Add an event listener to the keypress event.
     document.addEventListener("keydown", moveBear, false);
 
+    document.addEventListener("keydown", change)
+    
     //create new array for bees
     bees = new Array();
-    //bees[0]=1;  ///------<changes>------
 
     //create bees
     makeBees();
 
-    updateBees()  //------<changes>------
+    updateBees()  
 
-    //lastStingtime= document.addEventListener("keydown", moveBear, true);  //------<changes>------
-    lastStingTime= new Date();
+    //lastStingtime= document.addEventListener("keydown", moveBear, true); 
+    //lastStingTime= new Date();
 
 }
 
-   
+function change(){
+    lastStingTime= new Date();
+}
+
 class Bee {
     constructor(beeNumber) {
         //the HTML element corresponding to the IMG of the bee
@@ -170,7 +172,7 @@ function createBeeImg(wNum) {
 }   
 
 function getRandomInt(max) {
-    return Math.floor(Math.random() * max) + 1;
+    return Math.floor(Math.random() * max);
 }
 
 function makeBees() {
@@ -180,7 +182,7 @@ function makeBees() {
     let nBees = Number(nbBees); //try converting the content of the input to a number 
     if (isNaN(nBees)) { //check that the input field contains a valid number
         window.alert("Invalid number of bees");
-        //return;
+        return;
     }
     else{
         //create bees 
@@ -209,6 +211,11 @@ function addBees(){
     var bee = new Bee(num); //create object and its IMG element
     bee.display(); //display the bee
     bees.push(bee); //add the bee object to the bees array
+
+    //incrementing the value of bees in the input box
+    let num_bees = document.getElementById("nbBees").value.innerHTML;
+    num_bees = Number(num_bees) + 1; //increment the bees
+    num_bees.innerHTML = num_bees; //display the new bees
 }
    
 function moveBees() {
@@ -219,7 +226,7 @@ function moveBees() {
         let dx = getRandomInt(2 * speed) - speed;
         let dy = getRandomInt(2 * speed) - speed;
         bees[i].move(dx, dy);
-        isHit(bees[i], bear); //we add this to count stings  //------<changes>------
+        isHit(bees[i], bear); //we add this to count stings  
     }
 }
 
@@ -227,7 +234,7 @@ function updateBees() { // update loop for game
     //move the bees randomly
     moveBees();
     //use a fixed update period
-    //------<changes>------
+    
     let period = document.getElementById("periodTimer").value;//modify this to control refresh period 
     //update the timer for the next move
     updateTimer = setTimeout('updateBees()', period);
@@ -244,7 +251,7 @@ function clearTimeout(){
 function isHit(defender, offender) {
     if (overlap(defender, offender)) { //check if the two image overlap
         let score = document.getElementById("hits").innerHTML;
-            //------<changes>------
+            
 
         score = Number(score) + 1; //increment the score
         hits.innerHTML = score; //display the new score
@@ -256,7 +263,7 @@ function isHit(defender, offender) {
         }
 
         //calculate longest duration
-        let newStingTime = new Date(); //------<changes>------
+        let newStingTime = new Date();
         let thisDuration = newStingTime - lastStingTime;
         lastStingTime = newStingTime;
 
