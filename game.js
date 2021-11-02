@@ -100,9 +100,6 @@ function start() {
 
     updateBees()  
 
-    //lastStingtime= document.addEventListener("keydown", moveBear, true); 
-    //lastStingTime= new Date();
-
 }
 
 function change(){
@@ -262,13 +259,6 @@ function isHit(defender, offender) {
     
     if (overlap(defender, offender)) { //check if the two image overlap
         let score = document.getElementById("hits").innerHTML;
-        /*
-        if(isNaN(document.getElementById("duration").innerHTML)){
-            document.getElementById("duration").innerHTML=0;
-            document.getElementById("hits").innerHTML=0;
-            
-        }
-        */
         score = Number(score) + 1; //increment the score
         hits.innerHTML = score; //display the new score
 
