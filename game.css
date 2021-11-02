@@ -10,19 +10,19 @@
     position: absolute;
     height: 600px;
     width: 1200px;
-    background-color: rgb(6, 136, 119);
+    background-color: rgb(193, 226, 171);
     align-content: center;
     align-self: center;
 }
 
 #title {
-    background-color: rgb(128, 128, 128);
+    background-color: rgb(144, 158, 199);
     align-content: center;
     align-self: center;
 }
 
 #scores {
-    background-color: rgb(247, 134, 241);
+    background-color: rgb(176, 240, 245);
     align-content: center;
     align-self: center;
 }

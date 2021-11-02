@@ -43,7 +43,7 @@ function Bear() {
 
 }
    
-//changes
+//changes speed of bear
 function setspeed(){
     bear.dBear = document.getElementById("dBear").value;
     //console.log(bear.dBear);
@@ -54,6 +54,15 @@ function setspeed(){
 // to move the bear
 
 function moveBear(e) {
+    if (game_start==false){
+        game_start=true;
+        while(isNaN(document.getElementById("duration").innerHTML)){
+            document.getElementById("duration").innerHTML=0;
+            document.getElementById("hits").innerHTML=0;
+            
+        }
+        lastStingTime = new Date();
+    }
 
     //codes of the four keys
     const KEYUP = 38;
@@ -81,8 +90,8 @@ function start() {
     // Add an event listener to the keypress event.
     document.addEventListener("keydown", moveBear, false);
 
-    document.addEventListener("keydown", change)
-    
+    document.addEventListener("keydown", change,false);
+
     //create new array for bees
     bees = new Array();
 
@@ -98,6 +107,7 @@ function start() {
 
 function change(){
     lastStingTime= new Date();
+    document.removeEventListener("keydown", change,false);
 }
 
 class Bee {
@@ -249,10 +259,16 @@ function clearTimeout(){
 }
 
 function isHit(defender, offender) {
+    
     if (overlap(defender, offender)) { //check if the two image overlap
         let score = document.getElementById("hits").innerHTML;
+        /*
+        if(isNaN(document.getElementById("duration").innerHTML)){
+            document.getElementById("duration").innerHTML=0;
+            document.getElementById("hits").innerHTML=0;
             
-
+        }
+        */
         score = Number(score) + 1; //increment the score
         hits.innerHTML = score; //display the new score
 
